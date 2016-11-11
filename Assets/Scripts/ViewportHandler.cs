@@ -72,9 +72,7 @@ public class ViewportHandler : MonoBehaviour {
 	}
 
 	public void MoveViewport (GameObject levelTile) {
-		if (!m_moving) {
-			m_tile = levelTile;
-			m_moving = true;
-		}
+		m_tile = levelTile;
+		m_moving = true;
 	}
 }
