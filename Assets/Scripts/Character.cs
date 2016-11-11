@@ -66,6 +66,7 @@ public class Character : MonoBehaviour {
 	void OnTriggerExit2D (Collider2D other) {
 		if (other.gameObject.tag == "LevelTile") {
 //			ViewportHandler.viewport.GetComponent<ViewportHandler>().MoveViewport (gameObject.GetComponent<BoxCollider2D>().);
+			Physics2D.OverlapPointAll(new Vector2(transform.position.x, transform.position.y));
 		}
 	}
 
