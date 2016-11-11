@@ -14,10 +14,12 @@ public class WalkieTalkie : MonoBehaviour {
 	void Start () {
 		microphone = gameObject.GetComponent<AudioSource> ();
 		//Debug.Log (Microphone.devices [0]);
-		microphone.clip = Microphone.Start (Microphone.devices[0], true, 10, 44100);
-		while (!(Microphone.GetPosition (Microphone.devices [0]) > 0)) {
-		}
+		microphone.clip = Microphone.Start (null, true, 10, 44100);
+		microphone.loop = true;
+		microphone.mute = true;
+		while (!(Microphone.GetPosition (null) > 0)) {}
 		microphone.Play ();
+
 
 		clipSampleData = new float[sampleDataLength];
 	}
@@ -33,9 +35,9 @@ public class WalkieTalkie : MonoBehaviour {
 				clipLoudness += Mathf.Abs (sample);
 			}
 			clipLoudness /= sampleDataLength;
-			//Debug.Log (clipLoudness);
+			Debug.Log (clipLoudness);
 
-			//gameObject.transform.Translate (new Vector3 (0, Time.deltaTime * clipLoudness, 0));
+			gameObject.transform.Translate (new Vector3 (0, Time.deltaTime * clipLoudness * 5.0f, 0));
 		}
 	}
 
