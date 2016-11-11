@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Character : MonoBehaviour {
 	public float maxHealth;
+	public float stepDistance;
 	private float health;
 
 	public float maxWellBeing;
@@ -29,7 +30,7 @@ public class Character : MonoBehaviour {
 		float dy = Input.GetAxis ("Vertical");
 		Vector3 dv = Vector3.ClampMagnitude (new Vector3 (dx, dy, 0), 1.0f);
 		dv *= Time.deltaTime * speed;
-		if ((health -= dv.magnitude) <= 0) {// distance = dv.magnitude;
+		if ((health -= (dv.magnitude/stepDistance)) <= 0) {// distance = dv.magnitude;
 			//Death ();
 		} else {
 			gameObject.transform.Translate (dv);
@@ -53,10 +54,10 @@ public class Character : MonoBehaviour {
 			break;
 		case "Key":
 			PickUpKey (other.gameObject);
-			break;
+			break;//*
 		case "LevelTile":
 			ViewportHandler.viewport.GetComponent<ViewportHandler>().MoveViewport (other.gameObject);
-			break;
+			break;//*/
 		default:
 			Debug.Log (other);
 			break;
@@ -83,5 +84,8 @@ public class Character : MonoBehaviour {
 		key.GetComponent<SpriteRenderer> ().sortingLayerName = "HUD";
 		key.transform.parent = ViewportHandler.viewport.transform;
 		Destroy (key.GetComponent<BoxCollider2D> ());
+	}
+
+	private void Crysis (float value) {
 	}
 }
