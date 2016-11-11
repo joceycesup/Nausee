@@ -10,8 +10,13 @@ public class ViewportHandler : MonoBehaviour {
 		}
 	}
 
+	private GameObject m_tile;
+	private bool m_moving = false;
+	public float slideSpeed = 10;
+
 	// Use this for initialization
 	void Start () {
+		gameObject.GetComponent<BoxCollider2D> ().size = new Vector2 (Camera.main.orthographicSize * 2.0f * Screen.width / Screen.height, Camera.main.orthographicSize * 2.0f);
 		_viewport = gameObject;
 
 		// set the desired aspect ratio (the values in this example are
@@ -56,5 +61,20 @@ public class ViewportHandler : MonoBehaviour {
 	}
 
 	void Update () {
+		if (m_moving) {
+			float distance = Vector3.Distance (gameObject.transform.position, m_tile.transform.position);
+			if (distance > 0) {
+				gameObject.transform.position = Vector3.Lerp (gameObject.transform.position, m_tile.transform.position, Time.deltaTime *slideSpeed / distance);
+			} else {
+				m_moving = false;
+			}
+		}
+	}
+
+	public void MoveViewport (GameObject levelTile) {
+		if (!m_moving) {
+			m_tile = levelTile;
+			m_moving = true;
+		}
 	}
 }

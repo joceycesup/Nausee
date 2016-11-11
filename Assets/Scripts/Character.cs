@@ -30,7 +30,7 @@ public class Character : MonoBehaviour {
 		Vector3 dv = Vector3.ClampMagnitude (new Vector3 (dx, dy, 0), 1.0f);
 		dv *= Time.deltaTime * speed;
 		if ((health -= dv.magnitude) <= 0) {// distance = dv.magnitude;
-			Death ();
+			//Death ();
 		} else {
 			gameObject.transform.Translate (dv);
 		}
@@ -43,7 +43,7 @@ public class Character : MonoBehaviour {
 	void OnTriggerEnter2D (Collider2D other) {
 		switch (other.gameObject.tag) {
 		case "Door":
-			if (other.gameObject.GetComponent<Door>().RequiredKey() == key) {
+			if (other.gameObject.GetComponent<Door>().Open (key)) {
 				Debug.Log ("Can get through door");
 				DestroyObject (key);
 				Debug.Log (key);
@@ -54,6 +54,18 @@ public class Character : MonoBehaviour {
 		case "Key":
 			PickUpKey (other.gameObject);
 			break;
+		case "LevelTile":
+			ViewportHandler.viewport.GetComponent<ViewportHandler>().MoveViewport (other.gameObject);
+			break;
+		default:
+			Debug.Log (other);
+			break;
+		}
+	}
+
+	void OnTriggerExit2D (Collider2D other) {
+		if (other.gameObject.tag == "LevelTile") {
+//			ViewportHandler.viewport.GetComponent<ViewportHandler>().MoveViewport (gameObject.GetComponent<BoxCollider2D>().);
 		}
 	}
 

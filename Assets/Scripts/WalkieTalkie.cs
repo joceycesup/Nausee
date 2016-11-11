@@ -10,18 +10,19 @@ public class WalkieTalkie : MonoBehaviour {
 	private float loudnessThreshold;
 	private float[] clipSampleData;
 
+	private float maxLoudness = 0;
+
 	// Use this for initialization
 	void Start () {
 		microphone = gameObject.GetComponent<AudioSource> ();
+		clipSampleData = new float[sampleDataLength];
 		//Debug.Log (Microphone.devices [0]);
 		microphone.clip = Microphone.Start (null, true, 10, 44100);
 		microphone.loop = true;
-		microphone.mute = true;
+		//microphone.mute = true;
+		microphone.volume = 0;
 		while (!(Microphone.GetPosition (null) > 0)) {}
 		microphone.Play ();
-
-
-		clipSampleData = new float[sampleDataLength];
 	}
 	
 	// Update is called once per frame
@@ -35,9 +36,14 @@ public class WalkieTalkie : MonoBehaviour {
 				clipLoudness += Mathf.Abs (sample);
 			}
 			clipLoudness /= sampleDataLength;
-			Debug.Log (clipLoudness);
+			//Debug.Log (clipLoudness);
+			if (clipLoudness > maxLoudness) {
+				maxLoudness = clipLoudness;
+			}
 
-			gameObject.transform.Translate (new Vector3 (0, Time.deltaTime * clipLoudness * 5.0f, 0));
+			//gameObject.transform.Translate (new Vector3 (0, Time.deltaTime * clipLoudness * 5.0f, 0));
+			Color c = new Color(1, maxLoudness-clipLoudness, maxLoudness-clipLoudness);
+			gameObject.GetComponent<SpriteRenderer> ().color = c;
 		}
 	}
 
