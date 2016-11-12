@@ -37,6 +37,10 @@ public class Character : MonoBehaviour {
 		}
 	}
 
+	void OnGUI () {
+		GUI.Label (new Rect (10, 10, 100, 20), "Health : " + health);
+	}
+
 	private void Death () {
 		Destroy (gameObject);
 	}
