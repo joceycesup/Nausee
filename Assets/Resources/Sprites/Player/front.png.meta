@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 8995518713f1ae0409c522794e649802
-timeCreated: 1478986457
+timeCreated: 1478987511
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -14,6 +14,8 @@ TextureImporter:
     21300014: front_7
     21300016: front_8
     21300018: front_9
+    21300020: front_10
+    21300022: front_11
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -39,7 +41,7 @@ TextureImporter:
   textureFormat: -1
   maxTextureSize: 2048
   textureSettings:
-    filterMode: -1
+    filterMode: 1
     aniso: 16
     mipBias: -1
     wrapMode: 1
@@ -67,11 +69,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 900
-        width: 300
-        height: 300
+        y: 294
+        width: 142
+        height: 294
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -79,12 +81,12 @@ TextureImporter:
       name: front_1
       rect:
         serializedVersion: 2
-        x: 300
-        y: 900
-        width: 300
-        height: 300
+        x: 142
+        y: 294
+        width: 142
+        height: 294
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -92,12 +94,12 @@ TextureImporter:
       name: front_2
       rect:
         serializedVersion: 2
-        x: 600
-        y: 900
-        width: 300
-        height: 300
+        x: 284
+        y: 294
+        width: 142
+        height: 294
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -105,12 +107,12 @@ TextureImporter:
       name: front_3
       rect:
         serializedVersion: 2
-        x: 0
-        y: 600
-        width: 300
-        height: 300
+        x: 426
+        y: 294
+        width: 142
+        height: 294
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -118,12 +120,12 @@ TextureImporter:
       name: front_4
       rect:
         serializedVersion: 2
-        x: 300
-        y: 600
-        width: 300
-        height: 300
+        x: 568
+        y: 294
+        width: 142
+        height: 294
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -131,12 +133,12 @@ TextureImporter:
       name: front_5
       rect:
         serializedVersion: 2
-        x: 600
-        y: 600
-        width: 300
-        height: 300
+        x: 710
+        y: 294
+        width: 142
+        height: 294
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -145,11 +147,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 300
-        width: 300
-        height: 300
+        y: 0
+        width: 142
+        height: 294
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -157,12 +159,12 @@ TextureImporter:
       name: front_7
       rect:
         serializedVersion: 2
-        x: 300
-        y: 300
-        width: 300
-        height: 300
+        x: 142
+        y: 0
+        width: 142
+        height: 294
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -170,12 +172,12 @@ TextureImporter:
       name: front_8
       rect:
         serializedVersion: 2
-        x: 600
-        y: 300
-        width: 300
-        height: 300
+        x: 284
+        y: 0
+        width: 142
+        height: 294
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -183,12 +185,25 @@ TextureImporter:
       name: front_9
       rect:
         serializedVersion: 2
-        x: 0
+        x: 426
         y: 0
-        width: 300
-        height: 300
+        width: 142
+        height: 294
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: front_10
+      rect:
+        serializedVersion: 2
+        x: 568
+        y: 0
+        width: 142
+        height: 294
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0

@@ -17,7 +17,7 @@ public class Statue : MonoBehaviour {
 				gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 1);
 				emitter.GetComponent<StatueEmitter> ().StatueSeen ();
 			} else {
-				Debug.Log (fadeRemainingTime / fadeTime);
+				//Debug.Log (fadeRemainingTime / fadeTime);
 				gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, fadeRemainingTime / fadeTime);
 			}
 		}

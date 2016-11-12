@@ -39,6 +39,8 @@ public class Character : MonoBehaviour {
 		lastStepPosition = gameObject.transform.position;
 		gameObject.GetComponentInChildren<Halo> ().SetSize (haloMaxSize);
 
+		gameObject.GetComponent<BoxCollider2D>().size = gameObject.GetComponent<SpriteRenderer> ().sprite.bounds.size;
+
 		audioSource = gameObject.GetComponent<AudioSource> ();
 	}
 	
@@ -67,6 +69,20 @@ public class Character : MonoBehaviour {
 
 			float dx = Input.GetAxis ("Horizontal");
 			float dy = Input.GetAxis ("Vertical");
+			if (dx != 0.0f || dy != 0.0f) {
+				if (Mathf.Abs (dx) > Mathf.Abs (dy)) {
+					if (dx < 0.0f) {
+						gameObject.GetComponent<SpriteRenderer> ().flipX = false;
+					} else {
+						gameObject.GetComponent<SpriteRenderer> ().flipX = true;
+					}
+					gameObject.GetComponent<Animator> ().Play ("side");
+				} else {
+					gameObject.GetComponent<Animator> ().Play ((dy < 0.0f) ? "front" : "back");
+				}
+			} else {
+				gameObject.GetComponent<Animator> ().Play ("idle");
+			}
 			Vector3 dv = Vector3.ClampMagnitude (new Vector3 (dx, dy, 0), 1.0f);
 			dv *= Time.deltaTime * speed / stepDistance;
 			gameObject.transform.Translate (dv);
@@ -183,6 +199,7 @@ public class Character : MonoBehaviour {
 	}
 
 	private void Crysis (bool repeatLast) {
+		gameObject.GetComponent<Animator> ().Play ("crysis");
 		LoseHealth (10.0f);
 		crysisRemainingTime = crysisTalkTimes[crysis];
 		Debug.Log ("Sounds/Crysis" + (crysis+1) + ".wav");

@@ -5,7 +5,7 @@ public class CharacterTrigger : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	
+		gameObject.GetComponent<BoxCollider2D>().size = gameObject.transform.parent.gameObject.GetComponent<SpriteRenderer> ().sprite.bounds.size;
 	}
 	
 	// Update is called once per frame
