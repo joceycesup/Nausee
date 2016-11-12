@@ -50,7 +50,7 @@ public class Character : MonoBehaviour {
 			if (isTalking) {
 				float dTime = Time.deltaTime;
 				if (!wasTalking) {
-					Debug.Log ("started talking");
+					//Debug.Log ("started talking");
 					if ((Time.time - lastTalkTime) < maxStopTalkTime) {
 						dTime = Time.time - lastTalkTime;
 					}
@@ -60,7 +60,7 @@ public class Character : MonoBehaviour {
 				}
 				lastTalkTime = Time.time;
 			} else if ((Time.time - lastTalkTime) > maxStopTalkTime) {
-				Debug.Log ("stopped talking");
+				//Debug.Log ("stopped talking");
 			}
 		} else {
 			float speed = ((wellBeing / maxWellBeing) * (maxSpeed - minSpeed)) + minSpeed;
@@ -95,6 +95,7 @@ public class Character : MonoBehaviour {
 		if (statue.tag == "Statue_1") {
 			LoseWellBeing (10.0f);
 		} else {
+			statue.GetComponent<Statue> ().Seen ();
 			Crysis (true);
 		}
 	}
@@ -121,12 +122,10 @@ public class Character : MonoBehaviour {
 			break;//*/
 		case "Item_1":
 			GainHealth (15.0f);
-			Destroy (other.gameObject);
 			break;//*/
 		case "Item_2":
 			GainHealth (25.0f);
 			LoseWellBeing (6.0f);
-			Destroy (other.gameObject);
 			break;//*/
 		default:
 			Debug.Log (other);

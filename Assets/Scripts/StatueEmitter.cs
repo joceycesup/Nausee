@@ -4,15 +4,30 @@ using System.Collections;
 public class StatueEmitter : MonoBehaviour {
 	public GameObject statue;
 
+	private GameObject statueInstance;
+	private int currentBase;
+
 	// Use this for initialization
 	void Start () {
-		GameObject statueInstance = (GameObject)Instantiate (statue);
-		statueInstance.gameObject.transform.position =
-			gameObject.transform.GetChild (Random.Range (0, gameObject.transform.childCount)).transform.position +
-			new Vector3 (0, statueInstance.GetComponent<BoxCollider2D> ().bounds.extents.y);
+		statueInstance = (GameObject)Instantiate (statue);
+		statueInstance.GetComponent<Statue> ().emitter = gameObject;
+		PlaceStatue (Random.Range (0, gameObject.transform.childCount));
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+	private void PlaceStatue (int baseNum) {
+		currentBase = baseNum;
+		statueInstance.gameObject.transform.position =
+			gameObject.transform.GetChild (baseNum).transform.position +
+			new Vector3 (0, statueInstance.GetComponent<PolygonCollider2D> ().bounds.extents.y);
+	}
+
+	public void StatueSeen () {
+		int baseNum = Random.Range (0, gameObject.transform.childCount);
+		if (baseNum == currentBase) {
+			if (++baseNum >= gameObject.transform.childCount) {
+				baseNum = 0;
+			}
+		}
+		PlaceStatue (baseNum);
 	}
 }

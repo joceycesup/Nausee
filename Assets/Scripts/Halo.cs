@@ -13,6 +13,7 @@ public class Halo : MonoBehaviour {
 	}
 
 	void OnApplicationFocus (bool focus) {
+		//focus = false;
 		gameObject.GetComponent<SpriteRenderer> ().enabled = focus;
 		SpriteRenderer[] srs = transform.GetComponentsInChildren<SpriteRenderer> ();
 		for (int i = 0; i < srs.Length; ++i) {
