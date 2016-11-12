@@ -25,6 +25,7 @@ public class Character : MonoBehaviour {
 		health = maxHealth;
 		wellBeing = maxWellBeing;
 		lastStepPosition = gameObject.transform.position;
+		gameObject.GetComponentInChildren<Halo> ().SetSize (5.0f);
 	}
 	
 	// Update is called once per frame
@@ -58,7 +59,11 @@ public class Character : MonoBehaviour {
 		//Destroy (gameObject);
 	}
 
-	void OnTriggerEnter2D (Collider2D other) {
+	public void SeesStatue (GameObject statue) {
+		Debug.Log (statue + " : take cover!!");
+	}
+
+	public void TriggerEnter (Collider2D other) {
 		switch (other.gameObject.tag) {
 		case "Door":
 			if (other.gameObject.GetComponent<Door>().Open (key)) {
@@ -82,7 +87,7 @@ public class Character : MonoBehaviour {
 		}
 	}
 
-	void OnTriggerExit2D (Collider2D other) {
+	public void TriggerExit (Collider2D other) {
 		if (other.gameObject.tag == "LevelTile") {
 //			ViewportHandler.viewport.GetComponent<ViewportHandler>().MoveViewport (gameObject.GetComponent<BoxCollider2D>().);
 			Collider2D[] colls = Physics2D.OverlapPointAll(new Vector2(transform.position.x, transform.position.y));
