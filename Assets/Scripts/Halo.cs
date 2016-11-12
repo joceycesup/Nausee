@@ -8,6 +8,7 @@ public class Halo : MonoBehaviour {
 		SpriteRenderer[] srs = transform.GetComponentsInChildren<SpriteRenderer> ();
 		for (int i = 0; i < srs.Length; ++i) {
 			srs [i].enabled = true;
+			srs [i].color = gameObject.GetComponent<SpriteRenderer> ().color;
 		}
 	}
 
