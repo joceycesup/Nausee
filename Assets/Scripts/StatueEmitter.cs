@@ -7,7 +7,9 @@ public class StatueEmitter : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		GameObject statueInstance = (GameObject)Instantiate (statue);
-		statueInstance.gameObject.transform.position = gameObject.transform.GetChild (Random.Range (0, gameObject.transform.childCount)).transform.position;
+		statueInstance.gameObject.transform.position =
+			gameObject.transform.GetChild (Random.Range (0, gameObject.transform.childCount)).transform.position +
+			new Vector3 (0, statueInstance.GetComponent<BoxCollider2D> ().bounds.extents.y);
 	}
 	
 	// Update is called once per frame

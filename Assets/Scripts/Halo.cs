@@ -14,7 +14,7 @@ public class Halo : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D (Collider2D other) {
-		if (other.gameObject.tag == "Statue") {
+		if (other.gameObject.tag == "Statue_1" || other.gameObject.tag == "Statue_2") {
 			gameObject.transform.parent.gameObject.GetComponent<Character> ().SeesStatue (other.gameObject);
 		}
 	}
