@@ -93,6 +93,7 @@ public class Character : MonoBehaviour {
 	public void SeesStatue (GameObject statue) {
 		Debug.Log (statue + " : take cover!!");
 		if (statue.tag == "Statue_1") {
+			LoseWellBeing (10.0f);
 		} else {
 			Crysis (true);
 		}
