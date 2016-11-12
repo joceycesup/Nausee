@@ -6,16 +6,17 @@ public class Item : MonoBehaviour {
 
 	void Start () {
 		animator = gameObject.GetComponent<Animator> ();
-		Debug.Log (gameObject + " : " + animator);
+		//Debug.Log (gameObject + " : " + animator);
 	}
 
 	void OnCollisionEnter2D (Collision2D coll) {
 		if (coll.gameObject.tag == "Player") {
+			Debug.Log ("item collision");
 			if (animator != null) {
 				animator.enabled = true;
 				Destroy (gameObject.GetComponent<BoxCollider2D> ());
 			} else {
-				Destroy (gameObject);
+				Destroy (gameObject, .1f);
 			}
 		}
 	}
