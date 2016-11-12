@@ -4,6 +4,11 @@ using System.Collections;
 public class Halo : MonoBehaviour {
 
 	void Start () {
+		gameObject.GetComponent<SpriteRenderer> ().enabled = true;
+		SpriteRenderer[] srs = transform.GetComponentsInChildren<SpriteRenderer> ();
+		for (int i = 0; i < srs.Length; ++i) {
+			srs [i].enabled = true;
+		}
 	}
 
 	void Update () {

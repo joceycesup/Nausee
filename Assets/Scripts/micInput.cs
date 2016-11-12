@@ -11,13 +11,10 @@ public class micInput : MonoBehaviour {
     private bool _isInitialized;
 
     void InitMic()
-    {
-        if (_device == null)
-        {
-            _device = Microphone.devices[0];
-            _clipRecord = Microphone.Start(_device, true, 999, 44100);
-            Debug.Log(_clipRecord);
-        }
+	{
+		_device = Microphone.devices [0];
+		_clipRecord = Microphone.Start (_device, true, 999, 44100);
+		//Debug.Log (_clipRecord);
     }
 
     void StopMicrophone()
