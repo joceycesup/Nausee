@@ -5,6 +5,10 @@ public class Character : MonoBehaviour {
 	public float maxHealth;
 	public float stepDistance;
 	private float health;
+	private float stepsWalked = 0.0f;
+	private Vector3 lastStepPosition;
+
+	private float crysisRemainingTime = 0.0f;
 
 	public float maxWellBeing;
 	public float wellBeing;
@@ -20,40 +24,50 @@ public class Character : MonoBehaviour {
 	void Start () {
 		health = maxHealth;
 		wellBeing = maxWellBeing;
+		lastStepPosition = gameObject.transform.position;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		float speed = ((wellBeing / maxWellBeing) * (maxSpeed - minSpeed)) + minSpeed;
-
-		float dx = Input.GetAxis ("Horizontal");
-		float dy = Input.GetAxis ("Vertical");
-		Vector3 dv = Vector3.ClampMagnitude (new Vector3 (dx, dy, 0), 1.0f);
-		dv *= Time.deltaTime * speed;
-		if ((health -= (dv.magnitude/stepDistance)) <= 0) {// distance = dv.magnitude;
-			//Death ();
+		if (crysisRemainingTime > 0.0f) {
 		} else {
+			float speed = ((wellBeing / maxWellBeing) * (maxSpeed - minSpeed)) + minSpeed;
+
+			float dx = Input.GetAxis ("Horizontal");
+			float dy = Input.GetAxis ("Vertical");
+			Vector3 dv = Vector3.ClampMagnitude (new Vector3 (dx, dy, 0), 1.0f);
+			dv *= Time.deltaTime * speed / stepDistance;
+			float steps = dv.magnitude;
 			gameObject.transform.Translate (dv);
+			if (Vector3.Distance (lastStepPosition, gameObject.transform.position) >= stepDistance) {
+				lastStepPosition = gameObject.transform.position;
+				stepsWalked++;
+				if ((health--) <= 0) {
+					Death ();
+				}
+			}
 		}
 	}
 
 	void OnGUI () {
-		GUI.Label (new Rect (10, 10, 100, 20), "Health : " + health);
+		GUI.Label (new Rect (10, 10, 100, 20), "Health : " + (int)health);
+		GUI.Label (new Rect (10, 30, 100, 20), "Steps  : " + (int)stepsWalked);
 	}
 
 	private void Death () {
-		Destroy (gameObject);
+		//Destroy (gameObject);
 	}
 
 	void OnTriggerEnter2D (Collider2D other) {
 		switch (other.gameObject.tag) {
 		case "Door":
 			if (other.gameObject.GetComponent<Door>().Open (key)) {
-				Debug.Log ("Can get through door");
+				//Debug.Log ("Can get through door");
 				DestroyObject (key);
-				Debug.Log (key);
+				//Debug.Log (key);
 			} else {
-				Debug.Log ("OMG I'm having a crysis!");
+				//Debug.Log ("OMG I'm having a crysis!");
+				Crysis (0.0f);
 			}
 			break;
 		case "Key":
@@ -91,5 +105,6 @@ public class Character : MonoBehaviour {
 	}
 
 	private void Crysis (float value) {
+		crysisRemainingTime += value;
 	}
 }
