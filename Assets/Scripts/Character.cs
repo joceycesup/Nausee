@@ -26,7 +26,8 @@ public class Character : MonoBehaviour {
 	private int talkingCureReminder = 0;
 	private float beginCrysisWB;
 
-	private bool doorCrysis = false;
+	private bool doorCrysisDone = false;
+	private bool isDoorCrysis = false;
 
 	public float maxWellBeing;
 	public float wellBeing;
@@ -85,7 +86,7 @@ public class Character : MonoBehaviour {
 							Debug.Log ("stopped talking");
 							if (!walkieTalkie.GetComponent<AudioSource> ().isPlaying && (Time.time - lastTalkTime) > timeBeforeReminder) {
 								lastTalkTime = Time.time;
-								walkieTalkie.GetComponent<WalkieTalkie> ().PlanQuestion (currentQuestion, talkingCureReminder++);
+								walkieTalkie.GetComponent<WalkieTalkie> ().PlanQuestion (isDoorCrysis?-1:currentQuestion, talkingCureReminder++);
 								lastTalkTime = Time.time;
 								if (walkieTalkie.GetComponent<AudioSource> ().clip != null) {
 									lastTalkTime += walkieTalkie.GetComponent<AudioSource> ().clip.length;
@@ -171,8 +172,9 @@ public class Character : MonoBehaviour {
 				}
 				Destroy (key);
 			} else {
-				if (!doorCrysis && other.gameObject.GetComponent<Door>().isFinalDoor) {
-					doorCrysis = true;
+				if (!doorCrysisDone && other.gameObject.GetComponent<Door>().isFinalDoor) {
+					doorCrysisDone = true;
+					isDoorCrysis = true;
 					Crysis (true);
 				}
 			}
@@ -262,6 +264,7 @@ public class Character : MonoBehaviour {
 	}
 
 	private void Crysis (bool repeatLast) {
+		talkingCureReminder = 0;
 		beginCrysisWB = wellBeing;
 		gameObject.GetComponent<Animator> ().Play ("crysis");
 		LoseHealth (10.0f);
@@ -284,19 +287,24 @@ public class Character : MonoBehaviour {
 		audioSource.loop = true;
 		WalkieTalkie wt = walkieTalkie.GetComponent<WalkieTalkie> ();
 		walkieTalkie.GetComponent<Animator> ().Play ("active");
-		wt.PlanQuestion (currentQuestion, 0);
+		if (isDoorCrysis) {
+			wt.PlanQuestion (-1, 0);
+		} else {
+			currentQuestion = wt.PlanQuestion (currentQuestion, 0);
+		}
 		TalkingCure ();
 	}
 
 	private void TalkingCure () {
-		talkingCureReminder = 0;
 		isTalking = false;
 		talkingCure = true;
 	}
 
 	private void StopTalkingCure () {
-		currentQuestion++;
+		if (!isDoorCrysis)
+			currentQuestion++;
 		talkingCure = false;
+		isDoorCrysis = false;
 		walkieTalkie.GetComponent<Animator> ().Play ("idle");
 	}
 }

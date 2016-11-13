@@ -79,17 +79,26 @@ public class WalkieTalkie : MonoBehaviour {
 		return res;
 	}
 
-	public void PlanQuestion (int question, int reminder) {
+	public int PlanQuestion (int question, int reminder) {
 		voiceOver.clip = null;
 		for (int i = 0; i < maxSkip && voiceOver.clip == null; ++i) {
-			string path = "Sounds/VoiceOver/Q" + IntToString (question++, 2);
+			string path = "Sounds/VoiceOver/Q";
+			if (question < 0) {
+				path += "Key";
+			} else {
+				path += IntToString (question, 2);
+			}
 			if (reminder > 0) {
 				path += "R" + reminder;
 			}
 			Debug.Log (path);
 			voiceOver.clip = Resources.Load<AudioClip> (path);
+			if (voiceOver.clip == null) {
+				question++;
+			}
 		}
 		voiceOver.PlayDelayed (questionDelay);
+		return question;
 	}
 
 	private void HandleVoiceOver () {
