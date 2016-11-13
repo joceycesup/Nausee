@@ -16,7 +16,7 @@ public class Item : MonoBehaviour {
 				animator.enabled = true;
 				Destroy (gameObject.GetComponent<BoxCollider2D> ());
 			} else {
-				Destroy (gameObject, .1f);
+				Destroy (gameObject, 0.1f);
 			}
 		}
 	}

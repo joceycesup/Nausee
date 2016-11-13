@@ -5,8 +5,9 @@ public class Character : MonoBehaviour {
 	public float maxHealth;
 	public float stepDistance;
 	public float haloMaxSize;
+	public float haloMinSize;
 
-	private float health;
+	public float health;
 	private float stepsWalked = 0.0f;
 	private Vector3 lastStepPosition;
 
@@ -35,9 +36,9 @@ public class Character : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		health = maxHealth;
-		wellBeing = maxWellBeing;
+		wellBeing = maxWellBeing - 0.0001f;
 		lastStepPosition = gameObject.transform.position;
-		gameObject.GetComponentInChildren<Halo> ().SetSize (haloMaxSize);
+		gameObject.GetComponentInChildren<PlayerHalo> ().SetSize (haloMaxSize);
 
 		gameObject.GetComponent<BoxCollider2D>().size = gameObject.GetComponent<SpriteRenderer> ().sprite.bounds.size;
 
@@ -89,7 +90,8 @@ public class Character : MonoBehaviour {
 			if (Vector3.Distance (lastStepPosition, gameObject.transform.position) >= stepDistance) {
 				lastStepPosition = gameObject.transform.position;
 				stepsWalked++;
-				if ((health--) <= 0) {
+				LoseHealth (1.0f);
+				if (health <= 0) {
 					Death ();
 				}
 			}
@@ -103,7 +105,10 @@ public class Character : MonoBehaviour {
 	}
 
 	private void Death () {
-		//Destroy (gameObject);
+		gameObject.GetComponentInChildren<PlayerHalo> ().Shrink ();
+		//gameObject.transform.FindChild ("PlayerHalo").parent = null;
+		gameObject.GetComponent<Animator> ().Play ("crysis");
+		crysisRemainingTime = float.MaxValue;
 	}
 
 	public void SeesStatue (GameObject statue) {
@@ -143,6 +148,10 @@ public class Character : MonoBehaviour {
 			GainHealth (25.0f);
 			LoseWellBeing (6.0f);
 			break;//*/
+		case "TutoCrysis":
+			Destroy (other.gameObject);
+			Crysis (false);
+			break;//*/
 		default:
 			Debug.Log (other);
 			break;
@@ -157,8 +166,13 @@ public class Character : MonoBehaviour {
 
 	private void LoseHealth (float points) {
 		health -= points;
-		if (health <= 0.0f)
+
+		if (health <= 0.0f) {
+			gameObject.GetComponentInChildren<PlayerHalo> ().Shrink ();
 			Death ();
+		} else {
+			gameObject.GetComponentInChildren<PlayerHalo> ().SetSize (haloMinSize + (haloMaxSize - haloMinSize) * health / maxHealth);
+		}
 	}
 
 	private void LoseWellBeing (float points) {
@@ -171,9 +185,6 @@ public class Character : MonoBehaviour {
 		if ((int)(wellBeing / f) != (int)(tmpWB / f)) {
 			Crysis (false);
 		}
-
-		gameObject.GetComponentInChildren<Halo> ().SetSize (1.0f + (haloMaxSize - 1.0f) * wellBeing / maxWellBeing);
-		//TODO trigger crysis
 	}
 
 	public void TriggerExit (Collider2D other) {
