@@ -75,10 +75,12 @@ public class Character : MonoBehaviour {
 						if (talkingCureReminder == 0) {
 							lastTalkTime = Time.time;
 							Debug.Log ("start talkingcure");
+							talkingCureReminder++;
 						} else {
 							Debug.Log ("stopped talking");
 							if (!walkieTalkie.GetComponent<AudioSource> ().isPlaying && (Time.time - lastTalkTime) > timeBeforeReminder) {
-								walkieTalkie.GetComponent<WalkieTalkie> ().PlanQuestion (currentQuestion, ++talkingCureReminder);
+								lastTalkTime = Time.time;
+								walkieTalkie.GetComponent<WalkieTalkie> ().PlanQuestion (currentQuestion, talkingCureReminder++);
 							}
 						}
 					}

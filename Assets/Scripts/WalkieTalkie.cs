@@ -67,7 +67,7 @@ public class WalkieTalkie : MonoBehaviour {
 	}
 
 	public bool IsTalking () {
-		return micro.volume > loudnessThreshold;
+		return micro.volume > loudnessThreshold || Input.GetButton ("Fire2");
 	}
 
 	private string IntToString (int v, int size) {
