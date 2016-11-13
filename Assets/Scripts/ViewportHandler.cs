@@ -14,8 +14,19 @@ public class ViewportHandler : MonoBehaviour {
 	private bool m_moving = false;
 	public float slideSpeed = 10;
 
+	// audio variables
+	private AudioSource audio1;
+	private AudioSource audio2;
+	public float audioFadeTime = 2.0f;
+	private float audioFadeRemainingTime = 0.0f;
+
 	// Use this for initialization
 	void Start () {
+		audio1 = gameObject.GetComponent<AudioSource> ();
+		audio2 = (AudioSource)gameObject.AddComponent<AudioSource> ();
+		audio2.loop = true;
+		audio2.playOnAwake = false;
+
 		gameObject.GetComponent<BoxCollider2D> ().size = new Vector2 (Camera.main.orthographicSize * 2.0f * Screen.width / Screen.height, Camera.main.orthographicSize * 2.0f);
 		_viewport = gameObject;
 
@@ -61,6 +72,20 @@ public class ViewportHandler : MonoBehaviour {
 	}
 
 	void Update () {
+		if (audioFadeRemainingTime > 0.0f) {
+			if ((audioFadeRemainingTime -= Time.deltaTime) <= 0.0f) {
+				AudioSource tmp = audio1;
+				audio1 = audio2;
+				audio2 = tmp;
+				audio1.volume = 1.0f;
+				audio2.volume = 0.0f;
+				audio2.Stop ();
+			} else {
+				audio1.volume = audioFadeRemainingTime / audioFadeTime;
+				audio2.volume = 1.0f - audioFadeRemainingTime / audioFadeTime;
+			}
+		}
+
 		if (m_moving) {
 			float distance = Vector3.Distance (gameObject.transform.position, m_tile.transform.position);
 			if (distance > 0) {
@@ -74,5 +99,18 @@ public class ViewportHandler : MonoBehaviour {
 	public void MoveViewport (GameObject levelTile) {
 		m_tile = levelTile;
 		m_moving = true;
+	}
+
+	public void FadeToSound (int step, float fade) {
+		if (step == 0) {
+			Debug.Log ("Exit music");
+			audio2.clip = Resources.Load<AudioClip> ("Sounds/Exit_Music");
+		} else {
+			Debug.Log ("Sounds/AMB" + step);
+			audio2.clip = Resources.Load<AudioClip> ("Sounds/AMB" + step);
+		}
+		audio2.Play ();
+		audioFadeTime = fade;
+		audioFadeRemainingTime = audioFadeTime;
 	}
 }

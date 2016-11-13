@@ -11,13 +11,14 @@ public class Item : MonoBehaviour {
 
 	void OnCollisionEnter2D (Collision2D coll) {
 		if (coll.gameObject.tag == "Player") {
-			Debug.Log ("item collision");
+			//Debug.Log ("item collision");
+			Destroy (gameObject.GetComponent<BoxCollider2D> ());
 			if (animator != null) {
 				animator.enabled = true;
-				Destroy (gameObject.GetComponent<BoxCollider2D> ());
 			} else {
-				Destroy (gameObject, 0.1f);
+				Destroy (gameObject, gameObject.GetComponent<AudioSource> ().clip.length);
 			}
 		}
+		gameObject.GetComponent<AudioSource> ().Play ();
 	}
 }

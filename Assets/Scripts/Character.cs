@@ -13,9 +13,10 @@ public class Character : MonoBehaviour {
 	private float stepsWalked = 0.0f;
 	private Vector3 lastStepPosition;
 
+	private float crysisTalkTime = 0.0f; // used only to refill WB gauge
 	public float crysisRemainingTime = 0.0f;
 	private float lastTalkTime;
-	public float maxStopTalkTime = 0.3f;
+	public float maxStopTalkTime = 0.3f; // used to avoid blanks during talking cure
 	public float timeBeforeReminder = 1.0f;
 	private bool wasTalking = true;
 	private bool isTalking = true;
@@ -23,6 +24,7 @@ public class Character : MonoBehaviour {
 	private bool talkingCure = false;
 	private int currentQuestion = 1;
 	private int talkingCureReminder = 0;
+	private float beginCrysisWB; // used only to refill WB gauge
 
 	private bool doorCrysis = false;
 
@@ -51,7 +53,7 @@ public class Character : MonoBehaviour {
 
 		audioSource = gameObject.GetComponent<AudioSource> ();
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		if (crysisRemainingTime > 0.0f) {
@@ -67,6 +69,9 @@ public class Character : MonoBehaviour {
 								dTime = Time.time - lastTalkTime;
 							}
 						}
+						float maxWBValue = Mathf.Ceil (wellBeing * 4.0f / maxWellBeing) * (maxWellBeing / 4.0f) - 0.0001f;
+						wellBeing = (maxWBValue - beginCrysisWB) * (1.0f - crysisRemainingTime / crysisTalkTime) + beginCrysisWB;
+						wellBeingGauge.transform.localScale = new Vector3 (50.0f * wellBeing / maxWellBeing, 1, 1);
 						if ((crysisRemainingTime -= dTime) <= 0.0f) {
 							StopTalkingCure ();
 						}
@@ -81,6 +86,10 @@ public class Character : MonoBehaviour {
 							if (!walkieTalkie.GetComponent<AudioSource> ().isPlaying && (Time.time - lastTalkTime) > timeBeforeReminder) {
 								lastTalkTime = Time.time;
 								walkieTalkie.GetComponent<WalkieTalkie> ().PlanQuestion (currentQuestion, talkingCureReminder++);
+								lastTalkTime = Time.time;
+								if (walkieTalkie.GetComponent<AudioSource> ().clip != null) {
+									lastTalkTime += walkieTalkie.GetComponent<AudioSource> ().clip.length;
+								}
 							}
 						}
 					}
@@ -128,12 +137,13 @@ public class Character : MonoBehaviour {
 			}
 		}
 	}
-
+	//*
 	void OnGUI () {
-		GUI.Label (new Rect (10, 10, 200, 20), "Health     : " + (int)health);
-		GUI.Label (new Rect (10, 30, 200, 20), "Steps      : " + (int)stepsWalked);
-		GUI.Label (new Rect (10, 50, 200, 20), "Well Being : " + (int)wellBeing);
-	}
+		GUI.Label (new Rect (200, 10, 200, 20), "Health     : " + (int)health);
+		GUI.Label (new Rect (200, 30, 200, 20), "Steps      : " + (int)stepsWalked);
+		GUI.Label (new Rect (200, 50, 200, 20), "Well Being : " + (int)wellBeing);
+		GUI.Label (new Rect (200, 70, 200, 20), "Continue talking during : " + (int)crysisRemainingTime);
+	}//*/
 
 	private void Death () {
 		gameObject.GetComponentInChildren<PlayerHalo> ().Shrink ();
@@ -156,11 +166,12 @@ public class Character : MonoBehaviour {
 		switch (other.gameObject.tag) {
 		case "Door":
 			if (other.gameObject.GetComponent<Door>().Open (key)) {
-				//Debug.Log ("Can get through door");
 				Destroy (key);
-				//Debug.Log (key);
+				if (other.gameObject.GetComponent<Door>().isFinalDoor) {
+					ViewportHandler.viewport.GetComponent<ViewportHandler> ().FadeToSound (0, 2.0f);
+				}
 			} else {
-				if (!doorCrysis) {
+				if (!doorCrysis && other.gameObject.GetComponent<Door>().isFinalDoor) {
 					doorCrysis = true;
 					Crysis (true);
 				}
@@ -211,20 +222,25 @@ public class Character : MonoBehaviour {
 
 	private void LoseWellBeing (float points) {
 		float tmpWB = wellBeing;
-		wellBeing -= points;
-		if (wellBeing < 0.0f)
-			wellBeing = 0.0f;
+		if (wellBeing > 0.0f) {
+			wellBeing -= points;
+			if (wellBeing <= 0.0f) {
+				wellBeing = 0.0f;
+				Crysis (crysis == crysisTalkTimes.Length-1);
+			}
+		}
 		wellBeingGauge.transform.localScale = new Vector3 (50.0f * wellBeing / maxWellBeing, 1, 1);
 
 		float f = maxWellBeing / 4.0f;
 		if ((int)(wellBeing / f) != (int)(tmpWB / f)) {
+			ViewportHandler.viewport.GetComponent<ViewportHandler> ().FadeToSound ((int)(wellBeing / f) + 1, 4.0f);
 			Crysis (false);
 		}
 	}
 
 	public void TriggerExit (Collider2D other) {
 		if (other.gameObject.tag == "LevelTile") {
-//			ViewportHandler.viewport.GetComponent<ViewportHandler>().MoveViewport (gameObject.GetComponent<BoxCollider2D>().);
+			//			ViewportHandler.viewport.GetComponent<ViewportHandler>().MoveViewport (gameObject.GetComponent<BoxCollider2D>().);
 			Collider2D[] colls = Physics2D.OverlapPointAll(new Vector2(transform.position.x, transform.position.y));
 			for (int i = 0; i < colls.Length; ++i) {
 				if (colls [i].gameObject.tag == "LevelTile") {
@@ -241,13 +257,16 @@ public class Character : MonoBehaviour {
 		key.transform.position = ViewportHandler.viewport.transform.position + new Vector3 (keyExtents.x - Camera.main.orthographicSize * Screen.width / Screen.height, Camera.main.orthographicSize - keyExtents.y, 0);
 		key.GetComponent<SpriteRenderer> ().sortingLayerName = "HUD";
 		key.transform.parent = ViewportHandler.viewport.transform;
+		key.GetComponent<AudioSource> ().Play ();
 		Destroy (key.GetComponent<BoxCollider2D> ());
 	}
 
 	private void Crysis (bool repeatLast) {
+		beginCrysisWB = wellBeing;
 		gameObject.GetComponent<Animator> ().Play ("crysis");
 		LoseHealth (10.0f);
-		crysisRemainingTime = crysisTalkTimes[crysis];
+		crysisTalkTime = crysisTalkTimes[crysis];
+		crysisRemainingTime = crysisTalkTime;
 		Debug.Log ("Sounds/Crysis" + (crysis+1) + ".wav");
 		audioSource.Stop ();
 		audioSource.loop = false;
@@ -263,7 +282,6 @@ public class Character : MonoBehaviour {
 		audioSource.Stop ();
 		audioSource.loop = true;
 		WalkieTalkie wt = walkieTalkie.GetComponent<WalkieTalkie> ();
-		walkieTalkie.GetComponent<Animator> ().Play ("active");
 		wt.PlanQuestion (currentQuestion, 0);
 		TalkingCure ();
 	}
