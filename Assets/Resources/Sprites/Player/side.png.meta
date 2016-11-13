@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 330239925f4107d4eb059beed5abdd62
-timeCreated: 1478986442
+timeCreated: 1479030857
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -67,7 +67,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 900
+        y: 300
         width: 154
         height: 300
       alignment: 0
@@ -80,7 +80,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 154
-        y: 900
+        y: 300
         width: 154
         height: 300
       alignment: 0
@@ -93,7 +93,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 308
-        y: 900
+        y: 300
         width: 154
         height: 300
       alignment: 0
@@ -105,8 +105,8 @@ TextureImporter:
       name: side_3
       rect:
         serializedVersion: 2
-        x: 0
-        y: 600
+        x: 462
+        y: 300
         width: 154
         height: 300
       alignment: 0
@@ -118,8 +118,8 @@ TextureImporter:
       name: side_4
       rect:
         serializedVersion: 2
-        x: 154
-        y: 600
+        x: 616
+        y: 300
         width: 154
         height: 300
       alignment: 0
@@ -131,8 +131,8 @@ TextureImporter:
       name: side_5
       rect:
         serializedVersion: 2
-        x: 308
-        y: 600
+        x: 770
+        y: 300
         width: 154
         height: 300
       alignment: 0
@@ -145,7 +145,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 300
+        y: 0
         width: 154
         height: 300
       alignment: 0
@@ -158,7 +158,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 154
-        y: 300
+        y: 0
         width: 154
         height: 300
       alignment: 0
@@ -171,7 +171,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 308
-        y: 300
+        y: 0
         width: 154
         height: 300
       alignment: 0
@@ -183,7 +183,7 @@ TextureImporter:
       name: side_9
       rect:
         serializedVersion: 2
-        x: 0
+        x: 462
         y: 0
         width: 154
         height: 300

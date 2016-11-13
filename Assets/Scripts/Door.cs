@@ -5,7 +5,7 @@ public class Door : MonoBehaviour {
 	public GameObject key;
 	public Sprite openSprite;
 	public AudioClip openSound;
-	public bool isFinalDoor;
+	public bool isFinalDoor = false;
 
 	public bool Open (GameObject k) {
 		if (key == k) {

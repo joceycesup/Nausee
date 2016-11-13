@@ -184,10 +184,10 @@ public class Character : MonoBehaviour {
 			ViewportHandler.viewport.GetComponent<ViewportHandler>().MoveViewport (other.gameObject);
 			break;//*/
 		case "Item_1":
-			GainHealth (15.0f);
+			GainHealth (30.0f);
 			break;//*/
 		case "Item_2":
-			GainHealth (25.0f);
+			GainHealth (50.0f);
 			LoseWellBeing (6.0f);
 			break;//*/
 		case "TutoCrysis":
@@ -272,6 +272,7 @@ public class Character : MonoBehaviour {
 		audioSource.loop = false;
 		audioSource.clip = Resources.Load<AudioClip> ("Sounds/Crysis" + (crysis+1));
 		audioSource.Play ();
+		ViewportHandler.viewport.GetComponent<ViewportHandler> ().ShowCrysis ();
 
 		if (!repeatLast) {
 			crysis++;

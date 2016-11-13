@@ -104,7 +104,7 @@ public class ViewportHandler : MonoBehaviour {
 	public void FadeToSound (int step, float fade) {
 		if (step == 0) {
 			Debug.Log ("Exit music");
-			audio2.clip = Resources.Load<AudioClip> ("Sounds/Exit_Music");
+			audio2.clip = null;//Resources.Load<AudioClip> ("Sounds/Exit_Music");
 		} else {
 			Debug.Log ("Sounds/AMB" + step);
 			audio2.clip = Resources.Load<AudioClip> ("Sounds/AMB" + step);
@@ -112,5 +112,10 @@ public class ViewportHandler : MonoBehaviour {
 		audio2.Play ();
 		audioFadeTime = fade;
 		audioFadeRemainingTime = audioFadeTime;
+	}
+
+	public void ShowCrysis () {
+		gameObject.GetComponent<Animator> ().enabled = true;
+		gameObject.GetComponent<Animator> ().Play ("crysis_screen");
 	}
 }
