@@ -2,12 +2,14 @@
 using System.Collections;
 
 public class Character : MonoBehaviour {
-	public float maxHealth;
 	public float stepDistance;
 	public float haloMaxSize;
 	public float haloMinSize;
 
+	public float maxHealth;
 	public float health;
+	public GameObject healthGauge;
+
 	private float stepsWalked = 0.0f;
 	private Vector3 lastStepPosition;
 
@@ -22,6 +24,7 @@ public class Character : MonoBehaviour {
 
 	public float maxWellBeing;
 	public float wellBeing;
+	public GameObject wellBeingGauge;
 
 	public float maxSpeed;
 	public float minSpeed;
@@ -162,17 +165,20 @@ public class Character : MonoBehaviour {
 		health += points;
 		if (health > maxHealth)
 			health = maxHealth;
+		healthGauge.transform.localScale = new Vector3 (50.0f * health / maxHealth, 1, 1);
 	}
 
 	private void LoseHealth (float points) {
 		health -= points;
 
 		if (health <= 0.0f) {
+			health = 0.0f;
 			gameObject.GetComponentInChildren<PlayerHalo> ().Shrink ();
 			Death ();
 		} else {
 			gameObject.GetComponentInChildren<PlayerHalo> ().SetSize (haloMinSize + (haloMaxSize - haloMinSize) * health / maxHealth);
 		}
+		healthGauge.transform.localScale = new Vector3 (50.0f * health / maxHealth, 1, 1);
 	}
 
 	private void LoseWellBeing (float points) {
@@ -180,6 +186,7 @@ public class Character : MonoBehaviour {
 		wellBeing -= points;
 		if (wellBeing < 0.0f)
 			wellBeing = 0.0f;
+		wellBeingGauge.transform.localScale = new Vector3 (50.0f * wellBeing / maxWellBeing, 1, 1);
 
 		float f = maxWellBeing / 4.0f;
 		if ((int)(wellBeing / f) != (int)(tmpWB / f)) {
@@ -226,6 +233,7 @@ public class Character : MonoBehaviour {
 	private void StopCrysis () {
 		audioSource.Stop ();
 		WalkieTalkie wt = walkieTalkie.GetComponent<WalkieTalkie> ();
+		walkieTalkie.GetComponent<Animator> ().Play ("active");
 		wt.PlanQuestion ();
 	}
 }
