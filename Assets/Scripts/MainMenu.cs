@@ -4,13 +4,11 @@ using System.Collections;
 
 public class MainMenu : MonoBehaviour {
 
-
 	public void Startgame () {
-		SceneManager.LoadScene("NauseeLvl");
+		SceneManager.LoadScene(1);
 	}
 
 	public void Quitgame () {
 		Application.Quit();
-
 	}
 }
