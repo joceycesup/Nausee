@@ -12,7 +12,9 @@ public class micInput : MonoBehaviour {
 
     void InitMic()
 	{
-		_device = Microphone.devices [0];
+		/*
+		_device = null;/*/
+		_device = Microphone.devices [0];//*/
 		_clipRecord = Microphone.Start (_device, true, 999, 44100);
 		//Debug.Log (_clipRecord);
     }

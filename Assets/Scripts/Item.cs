@@ -10,6 +10,7 @@ public class Item : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D (Collision2D coll) {
+		Debug.Log ("item coll : " + coll.gameObject.tag);
 		if (coll.gameObject.tag == "Player") {
 			//Debug.Log ("item collision");
 			Destroy (gameObject.GetComponent<BoxCollider2D> ());

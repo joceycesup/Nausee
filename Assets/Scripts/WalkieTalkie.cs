@@ -18,7 +18,6 @@ public class WalkieTalkie : MonoBehaviour {
 	//Vérifie qu'il y a un son toutes les x secondes;
 
 	private AudioSource voiceOver;
-	public float questionDelay = 2.0f;
 	private int maxSkip = 2;
     
 	// Use this for initialization
@@ -28,7 +27,9 @@ public class WalkieTalkie : MonoBehaviour {
 		currentTime = Time.time;
 		micro = gameObject.GetComponent<micInput> ();
 		voiceOver = gameObject.GetComponent<AudioSource> ();
+		voiceOver.clip = Resources.Load<AudioClip> ("Sounds/VoiceOver/tutoVoice");
 		voiceOver.loop = false;
+		voiceOver.Play ();
 	}
 	
 	// Update is called once per frame
@@ -95,9 +96,18 @@ public class WalkieTalkie : MonoBehaviour {
 			voiceOver.clip = Resources.Load<AudioClip> (path);
 			if (voiceOver.clip == null) {
 				question++;
+			} else {
+				float[] samples = new float[voiceOver.clip.samples * voiceOver.clip.channels];
+				voiceOver.clip.GetData(samples, 0);
+				int j = 0;
+				while (j < samples.Length) {
+					samples [j] = samples [j] * 2.0f;//1.15f;
+					++j;
+				}
+				voiceOver.clip.SetData(samples, 0);
 			}
 		}
-		voiceOver.PlayDelayed (questionDelay);
+		voiceOver.Play ();
 		return question;
 	}
 

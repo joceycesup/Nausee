@@ -43,6 +43,9 @@ public class Character : MonoBehaviour {
 
 	public float[] crysisTalkTimes;
 
+	private bool tutoSkipped = false;
+	private float startTime;
+
 	// Use this for initialization
 	void Start () {
 		health = maxHealth;
@@ -53,10 +56,17 @@ public class Character : MonoBehaviour {
 		gameObject.GetComponent<BoxCollider2D>().size = gameObject.GetComponent<SpriteRenderer> ().sprite.bounds.size;
 
 		audioSource = gameObject.GetComponent<AudioSource> ();
+
+		startTime = Time.time + Resources.Load<AudioClip> ("Sounds/VoiceOver/tutoVoice").length;
 	}
 
 	// Update is called once per frame
 	void Update () {
+		if (!tutoSkipped) {
+			if (Time.time >= startTime) {
+				tutoSkipped = true;
+			}
+		}
 		if (crysisRemainingTime > 0.0f) {
 			wasTalking = isTalking;
 			isTalking = walkieTalkie.GetComponent<WalkieTalkie> ().IsTalking ();
@@ -100,7 +110,7 @@ public class Character : MonoBehaviour {
 					StopCrysis ();
 				}
 			}
-		} else {
+		} else if (tutoSkipped) {
 			float speed = ((wellBeing / maxWellBeing) * (maxSpeed - minSpeed)) + minSpeed;
 
 			float dx = Input.GetAxis ("Horizontal");
@@ -150,6 +160,8 @@ public class Character : MonoBehaviour {
 		gameObject.GetComponentInChildren<PlayerHalo> ().Shrink ();
 		//gameObject.transform.FindChild ("PlayerHalo").parent = null;
 		gameObject.GetComponent<Animator> ().Play ("crysis");
+		audioSource.Stop ();
+		audioSource.clip = null;
 		crysisRemainingTime = float.MaxValue;
 	}
 
@@ -197,7 +209,6 @@ public class Character : MonoBehaviour {
 			Crysis (false);
 			break;//*/
 		default:
-			Debug.Log (other);
 			break;
 		}
 	}
@@ -256,7 +267,8 @@ public class Character : MonoBehaviour {
 	private void PickUpKey (GameObject keyObject) {
 		key = keyObject;
 		Vector3 keyExtents = key.GetComponent<SpriteRenderer> ().sprite.bounds.extents;
-		key.transform.position = ViewportHandler.viewport.transform.position + new Vector3 (keyExtents.x - Camera.main.orthographicSize * Screen.width / Screen.height, Camera.main.orthographicSize - keyExtents.y, 0);
+		float margin = 0.5f;
+		key.transform.position = ViewportHandler.viewport.transform.position + new Vector3 (- keyExtents.x + Camera.main.orthographicSize * Screen.width / Screen.height - margin, - Camera.main.orthographicSize + keyExtents.y + margin, 0);
 		key.GetComponent<SpriteRenderer> ().sortingLayerName = "HUD";
 		key.transform.parent = ViewportHandler.viewport.transform;
 		key.GetComponent<AudioSource> ().Play ();
@@ -267,6 +279,9 @@ public class Character : MonoBehaviour {
 		talkingCureReminder = 0;
 		beginCrysisWB = wellBeing;
 		gameObject.GetComponent<Animator> ().Play ("crysis");
+		if (isDoorCrysis) {
+			LoseWellBeing (6.0f);
+		}
 		LoseHealth (10.0f);
 		crysisTalkTime = crysisTalkTimes[crysis];
 		crysisRemainingTime = crysisTalkTime;

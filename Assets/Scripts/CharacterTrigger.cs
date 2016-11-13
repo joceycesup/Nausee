@@ -5,7 +5,7 @@ public class CharacterTrigger : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		gameObject.GetComponent<BoxCollider2D>().size = gameObject.transform.parent.gameObject.GetComponent<SpriteRenderer> ().sprite.bounds.size;
+		gameObject.GetComponent<BoxCollider2D>().size = gameObject.transform.parent.gameObject.GetComponent<SpriteRenderer> ().sprite.bounds.size*1.01f;
 	}
 	
 	// Update is called once per frame
@@ -14,6 +14,7 @@ public class CharacterTrigger : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D (Collider2D other) {
+		Debug.Log ("char trigger : " + other.tag);
 		gameObject.transform.parent.gameObject.GetComponent<Character> ().TriggerEnter (other);
 	}
 

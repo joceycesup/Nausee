@@ -7,7 +7,12 @@ public class Statue : MonoBehaviour {
 	private float fadeRemainingTime = 0.0f;
 
 	public void Seen () {
+		SetHalo (true);
 		fadeRemainingTime = fadeTime;
+	}
+
+	public void SetHalo (bool b) {
+		transform.GetChild(0).gameObject.GetComponent<SpriteRenderer> ().enabled = b;
 	}
 
 	// Update is called once per frame

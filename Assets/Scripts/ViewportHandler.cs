@@ -103,7 +103,7 @@ public class ViewportHandler : MonoBehaviour {
 
 	public void FadeToSound (int step, float fade) {
 		if (step == 0) {
-			Debug.Log ("Exit music");
+			//Debug.Log ("Exit music");
 			audio2.clip = null;//Resources.Load<AudioClip> ("Sounds/Exit_Music");
 		} else {
 			Debug.Log ("Sounds/AMB" + step);

@@ -16,6 +16,7 @@ public class StatueEmitter : MonoBehaviour {
 
 	private void PlaceStatue (int baseNum) {
 		currentBase = baseNum;
+		statueInstance.GetComponent<Statue> ().SetHalo (false);
 		statueInstance.gameObject.transform.position =
 			gameObject.transform.GetChild (baseNum).transform.position +
 			new Vector3 (0, statueInstance.GetComponent<PolygonCollider2D> ().bounds.extents.y);

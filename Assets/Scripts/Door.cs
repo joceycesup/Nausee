@@ -7,7 +7,7 @@ public class Door : MonoBehaviour {
 	public AudioClip openSound;
 	public bool isFinalDoor = false;
 
-	public bool Open (GameObject k) {
+	public virtual bool Open (GameObject k) {
 		if (key == k) {
 			Destroy (gameObject.GetComponent<BoxCollider2D> ());
 			gameObject.GetComponent<SpriteRenderer> ().sprite = openSprite;
