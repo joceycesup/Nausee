@@ -24,7 +24,7 @@ public class Character : MonoBehaviour {
 	private bool talkingCure = false;
 	private int currentQuestion = 1;
 	private int talkingCureReminder = 0;
-	private float beginCrysisWB; // used only to refill WB gauge
+	private float beginCrysisWB;
 
 	private bool doorCrysis = false;
 
@@ -166,10 +166,10 @@ public class Character : MonoBehaviour {
 		switch (other.gameObject.tag) {
 		case "Door":
 			if (other.gameObject.GetComponent<Door>().Open (key)) {
-				Destroy (key);
 				if (other.gameObject.GetComponent<Door>().isFinalDoor) {
 					ViewportHandler.viewport.GetComponent<ViewportHandler> ().FadeToSound (0, 2.0f);
 				}
+				Destroy (key);
 			} else {
 				if (!doorCrysis && other.gameObject.GetComponent<Door>().isFinalDoor) {
 					doorCrysis = true;
@@ -282,6 +282,7 @@ public class Character : MonoBehaviour {
 		audioSource.Stop ();
 		audioSource.loop = true;
 		WalkieTalkie wt = walkieTalkie.GetComponent<WalkieTalkie> ();
+		walkieTalkie.GetComponent<Animator> ().Play ("active");
 		wt.PlanQuestion (currentQuestion, 0);
 		TalkingCure ();
 	}
