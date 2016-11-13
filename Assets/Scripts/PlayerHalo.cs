@@ -48,7 +48,12 @@ public class Halo : MonoBehaviour {
 using UnityEngine;
 using System.Collections;
 
-public class Halo : MonoBehaviour {
+public class PlayerHalo : MonoBehaviour {
+	public float fadeTime = 2.0f;
+	private float fadeRemainingTime = 0.0f;
+
+	private Vector3 shrinkInitialSize;
+	private float minSize = 0.01f;
 
 	void Start () {
 		gameObject.GetComponent<SpriteRenderer> ().enabled = true;
@@ -69,10 +74,24 @@ public class Halo : MonoBehaviour {
 	}
 
 	void Update () {
+		if (fadeRemainingTime > 0.0f) {
+			if ((fadeRemainingTime -= Time.deltaTime) <= 0.0f) {
+				//gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 1);
+				//emitter.GetComponent<StatueEmitter> ().StatueSeen ();
+			} else {
+				//Debug.Log (fadeRemainingTime / fadeTime);
+				gameObject.GetComponent<SpriteRenderer> ().transform.localScale = shrinkInitialSize*(minSize+(fadeRemainingTime / fadeTime)*(1.0f-minSize));
+			}
+		}
 	}
 
 	public void SetSize (float size) {
 		gameObject.GetComponent<SpriteRenderer> ().transform.localScale = new Vector3 (size, size);
+	}
+
+	public void Shrink () {
+		shrinkInitialSize = gameObject.GetComponent<SpriteRenderer> ().transform.localScale;
+		fadeRemainingTime = fadeTime;
 	}
 
 	void OnTriggerEnter2D (Collider2D other) {
