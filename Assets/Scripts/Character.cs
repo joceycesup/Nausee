@@ -16,10 +16,12 @@ public class Character : MonoBehaviour {
 	public float crysisRemainingTime = 0.0f;
 	private float lastTalkTime;
 	public float maxStopTalkTime = 0.3f;
+	public float timeBeforeReminder = 1.0f;
 	private bool wasTalking = true;
 	private bool isTalking = true;
 	private int crysis = 0;
 	private bool talkingCure = false;
+	private int currentQuestion = 1;
 	private int talkingCureReminder = 0;
 
 	private bool doorCrysis = false;
@@ -56,22 +58,29 @@ public class Character : MonoBehaviour {
 			wasTalking = isTalking;
 			isTalking = walkieTalkie.GetComponent<WalkieTalkie> ().IsTalking ();
 			if (talkingCure) {
-				if (isTalking) {
-					float dTime = Time.deltaTime;
-					if (!wasTalking) {
-						Debug.Log ("started talking");
-						if ((Time.time - lastTalkTime) < maxStopTalkTime) {
-							dTime = Time.time - lastTalkTime;
+				if (!walkieTalkie.GetComponent<AudioSource> ().isPlaying) {
+					if (isTalking) {
+						float dTime = Time.deltaTime;
+						if (!wasTalking) {
+							//Debug.Log ("started talking");
+							if ((Time.time - lastTalkTime) < maxStopTalkTime) {
+								dTime = Time.time - lastTalkTime;
+							}
 						}
-					}
-					if ((crysisRemainingTime -= dTime) <= 0.0f) {
-						StopTalkingCure ();
-					}
-					lastTalkTime = Time.time;
-				} else if ((Time.time - lastTalkTime) > maxStopTalkTime) {
-					Debug.Log ("stopped talking");
-					if (!walkieTalkie.GetComponent<AudioSource> ().isPlaying) {
-						walkieTalkie.GetComponent<WalkieTalkie> ().PlanQuestion (talkingCureReminder);
+						if ((crysisRemainingTime -= dTime) <= 0.0f) {
+							StopTalkingCure ();
+						}
+						lastTalkTime = Time.time;
+					} else if ((Time.time - lastTalkTime) > maxStopTalkTime) {
+						if (talkingCureReminder == 0) {
+							lastTalkTime = Time.time;
+							Debug.Log ("start talkingcure");
+						} else {
+							Debug.Log ("stopped talking");
+							if (!walkieTalkie.GetComponent<AudioSource> ().isPlaying && (Time.time - lastTalkTime) > timeBeforeReminder) {
+								walkieTalkie.GetComponent<WalkieTalkie> ().PlanQuestion (currentQuestion, ++talkingCureReminder);
+							}
+						}
 					}
 				}
 			} else {
@@ -85,6 +94,10 @@ public class Character : MonoBehaviour {
 			float dx = Input.GetAxis ("Horizontal");
 			float dy = Input.GetAxis ("Vertical");
 			if (dx != 0.0f || dy != 0.0f) {
+				if (audioSource.clip == null) {
+					audioSource.clip = Resources.Load<AudioClip> ("Sounds/Pas1");
+					audioSource.Play ();
+				}
 				if (Mathf.Abs (dx) > Mathf.Abs (dy)) {
 					if (dx < 0.0f) {
 						gameObject.GetComponent<SpriteRenderer> ().flipX = false;
@@ -97,6 +110,8 @@ public class Character : MonoBehaviour {
 				}
 			} else {
 				gameObject.GetComponent<Animator> ().Play ("idle");
+				audioSource.Stop ();
+				audioSource.clip = null;
 			}
 			Vector3 dv = Vector3.ClampMagnitude (new Vector3 (dx, dy, 0), 1.0f);
 			dv *= Time.deltaTime * speed / stepDistance;
@@ -247,7 +262,7 @@ public class Character : MonoBehaviour {
 		audioSource.loop = true;
 		WalkieTalkie wt = walkieTalkie.GetComponent<WalkieTalkie> ();
 		walkieTalkie.GetComponent<Animator> ().Play ("active");
-		wt.PlanQuestion (0);
+		wt.PlanQuestion (currentQuestion, 0);
 		TalkingCure ();
 	}
 
@@ -258,6 +273,7 @@ public class Character : MonoBehaviour {
 	}
 
 	private void StopTalkingCure () {
+		currentQuestion++;
 		talkingCure = false;
 		walkieTalkie.GetComponent<Animator> ().Play ("idle");
 	}
