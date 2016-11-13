@@ -42,7 +42,8 @@ public class PlayerHalo : MonoBehaviour {
 		gameObject.GetComponent<SpriteRenderer> ().transform.localScale = new Vector3 (size, size);
 	}
 
-	public void Shrink () {
+	public void Shrink (float ft) {
+		fadeTime = ft;
 		shrinkInitialSize = gameObject.GetComponent<SpriteRenderer> ().transform.localScale;
 		fadeRemainingTime = fadeTime;
 	}

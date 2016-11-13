@@ -63,7 +63,7 @@ public class WalkieTalkie : MonoBehaviour {
 			// 2.0f -> valeur arbitraire, on met le seuil a la moitie de la moyenne du volume lors de la calibration
 			// change cette valeur comme tu veux ou utilise une autre technique pour definir le seuil, c'est toi qui vois
 			loudnessThreshold = averageLoudness / 2.0f;
-			Debug.Log ("Threshold : " + loudnessThreshold);
+			//Debug.Log ("Threshold : " + loudnessThreshold);
 		}
 	}
 
@@ -92,7 +92,7 @@ public class WalkieTalkie : MonoBehaviour {
 			if (reminder > 0) {
 				path += "R" + reminder;
 			}
-			Debug.Log (path);
+			//Debug.Log (path);
 			voiceOver.clip = Resources.Load<AudioClip> (path);
 			if (voiceOver.clip == null) {
 				question++;

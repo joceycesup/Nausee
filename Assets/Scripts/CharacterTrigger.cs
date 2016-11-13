@@ -14,7 +14,7 @@ public class CharacterTrigger : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D (Collider2D other) {
-		Debug.Log ("char trigger : " + other.tag);
+		//Debug.Log ("char trigger : " + other.tag);
 		gameObject.transform.parent.gameObject.GetComponent<Character> ().TriggerEnter (other);
 	}
 

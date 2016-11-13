@@ -9,16 +9,11 @@ public class Item : MonoBehaviour {
 		//Debug.Log (gameObject + " : " + animator);
 	}
 
-	void OnCollisionEnter2D (Collision2D coll) {
-		Debug.Log ("item coll : " + coll.gameObject.tag);
-		if (coll.gameObject.tag == "Player") {
-			//Debug.Log ("item collision");
-			Destroy (gameObject.GetComponent<BoxCollider2D> ());
-			if (animator != null) {
-				animator.enabled = true;
-			} else {
-				Destroy (gameObject, gameObject.GetComponent<AudioSource> ().clip.length);
-			}
+	public void Pickup () {
+		Debug.Log (gameObject+" : picked up");
+		Destroy (gameObject.GetComponent<BoxCollider2D> ());
+		if (animator != null) {
+			animator.enabled = true;
 		}
 		gameObject.GetComponent<AudioSource> ().Play ();
 	}

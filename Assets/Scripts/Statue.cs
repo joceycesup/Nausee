@@ -12,7 +12,9 @@ public class Statue : MonoBehaviour {
 	}
 
 	public void SetHalo (bool b) {
-		transform.GetChild(0).gameObject.GetComponent<SpriteRenderer> ().enabled = b;
+		transform.GetChild (0).gameObject.GetComponent<SpriteRenderer> ().enabled = b;
+		transform.GetChild (0).gameObject.GetComponent<SpriteRenderer> ().sortingLayerName = b?"HUD":"Items";
+		gameObject.GetComponent<SpriteRenderer> ().sortingLayerName = b?"HUD":"Items";
 	}
 
 	// Update is called once per frame
@@ -20,10 +22,12 @@ public class Statue : MonoBehaviour {
 		if (fadeRemainingTime > 0.0f) {
 			if ((fadeRemainingTime -= Time.deltaTime) <= 0.0f) {
 				gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 1);
+				transform.GetChild (0).gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 1);
 				emitter.GetComponent<StatueEmitter> ().StatueSeen ();
 			} else {
 				//Debug.Log (fadeRemainingTime / fadeTime);
 				gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, fadeRemainingTime / fadeTime);
+				transform.GetChild (0).gameObject.GetComponent<SpriteRenderer> ().color = new Color(1, 1, 1, fadeRemainingTime / fadeTime);
 			}
 		}
 	}

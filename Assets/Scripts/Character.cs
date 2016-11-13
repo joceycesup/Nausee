@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class Character : MonoBehaviour {
@@ -43,8 +44,16 @@ public class Character : MonoBehaviour {
 
 	public float[] crysisTalkTimes;
 
-	private bool tutoSkipped = false;
+	public bool tutoSkipped = false;
 	private float startTime;
+
+	private bool reachedEnd = false;
+	private float exitTime;
+	private bool dead = false;
+
+	private bool canTalk = false;
+
+	public GameObject endLocation;
 
 	// Use this for initialization
 	void Start () {
@@ -62,6 +71,25 @@ public class Character : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+		if (reachedEnd) {
+			if (Time.time > exitTime) {
+				SceneManager.LoadScene ("Menu");
+			} else {
+				float dx = Input.GetAxis ("Horizontal");
+				float dy = Input.GetAxis ("Vertical");
+				gameObject.GetComponent<Animator> ().Play ("back");
+				Vector3 dv = Vector3.Normalize (endLocation.transform.position - gameObject.transform.position);
+				dv *= Time.deltaTime * maxSpeed / stepDistance;
+				gameObject.transform.Translate (dv);
+			}
+			return;
+		}
+		if (dead) {
+			if (Time.time > exitTime) {
+				SceneManager.LoadScene ("Menu");
+			}
+		}
+
 		if (!tutoSkipped) {
 			if (Time.time >= startTime) {
 				tutoSkipped = true;
@@ -72,6 +100,10 @@ public class Character : MonoBehaviour {
 			isTalking = walkieTalkie.GetComponent<WalkieTalkie> ().IsTalking ();
 			if (talkingCure) {
 				if (!walkieTalkie.GetComponent<AudioSource> ().isPlaying) {
+					if (!canTalk) {
+						canTalk = true;
+						walkieTalkie.GetComponent<Animator> ().Play ("active");
+					}
 					if (isTalking) {
 						float dTime = Time.deltaTime;
 						if (!wasTalking) {
@@ -93,16 +125,22 @@ public class Character : MonoBehaviour {
 							Debug.Log ("start talkingcure");
 							talkingCureReminder++;
 						} else {
-							Debug.Log ("stopped talking");
-							if (!walkieTalkie.GetComponent<AudioSource> ().isPlaying && (Time.time - lastTalkTime) > timeBeforeReminder) {
+							//Debug.Log ("stopped talking");
+							//canTalk = !walkieTalkie.GetComponent<AudioSource> ().isPlaying;
+							if ((Time.time - lastTalkTime) > timeBeforeReminder) {
 								lastTalkTime = Time.time;
-								walkieTalkie.GetComponent<WalkieTalkie> ().PlanQuestion (isDoorCrysis?-1:currentQuestion, talkingCureReminder++);
+								walkieTalkie.GetComponent<WalkieTalkie> ().PlanQuestion (isDoorCrysis ? -1 : currentQuestion, talkingCureReminder++);
 								lastTalkTime = Time.time;
 								if (walkieTalkie.GetComponent<AudioSource> ().clip != null) {
 									lastTalkTime += walkieTalkie.GetComponent<AudioSource> ().clip.length;
 								}
 							}
 						}
+					}
+				} else {
+					if (canTalk) {
+						canTalk = false;
+						walkieTalkie.GetComponent<Animator> ().Play ("idle");
 					}
 				}
 			} else {
@@ -148,7 +186,7 @@ public class Character : MonoBehaviour {
 			}
 		}
 	}
-	//*
+	/*
 	void OnGUI () {
 		GUI.Label (new Rect (200, 10, 200, 20), "Health     : " + (int)health);
 		GUI.Label (new Rect (200, 30, 200, 20), "Steps      : " + (int)stepsWalked);
@@ -157,12 +195,15 @@ public class Character : MonoBehaviour {
 	}//*/
 
 	private void Death () {
-		gameObject.GetComponentInChildren<PlayerHalo> ().Shrink ();
+		gameObject.GetComponentInChildren<PlayerHalo> ().Shrink (2.0f);
+		walkieTalkie.GetComponent<AudioSource> ().mute = true;
 		//gameObject.transform.FindChild ("PlayerHalo").parent = null;
 		gameObject.GetComponent<Animator> ().Play ("crysis");
 		audioSource.Stop ();
 		audioSource.clip = null;
 		crysisRemainingTime = float.MaxValue;
+		dead = true;
+		exitTime = Time.time + 2.0f;
 	}
 
 	public void SeesStatue (GameObject statue) {
@@ -181,6 +222,8 @@ public class Character : MonoBehaviour {
 			if (other.gameObject.GetComponent<Door>().Open (key)) {
 				if (other.gameObject.GetComponent<Door>().isFinalDoor) {
 					ViewportHandler.viewport.GetComponent<ViewportHandler> ().FadeToSound (0, 2.0f);
+					reachedEnd = true;
+					exitTime = Time.time + Resources.Load<AudioClip> ("Sounds/Exit_Music").length * 2.0f;
 				}
 				Destroy (key);
 			} else {
@@ -199,10 +242,12 @@ public class Character : MonoBehaviour {
 			break;//*/
 		case "Item_1":
 			GainHealth (30.0f);
+			other.GetComponent<Item> ().Pickup ();
 			break;//*/
 		case "Item_2":
 			GainHealth (50.0f);
 			LoseWellBeing (6.0f);
+			other.GetComponent<Item> ().Pickup ();
 			break;//*/
 		case "TutoCrysis":
 			Destroy (other.gameObject);
@@ -225,7 +270,6 @@ public class Character : MonoBehaviour {
 
 		if (health <= 0.0f) {
 			health = 0.0f;
-			gameObject.GetComponentInChildren<PlayerHalo> ().Shrink ();
 			Death ();
 		} else {
 			gameObject.GetComponentInChildren<PlayerHalo> ().SetSize (haloMinSize + (haloMaxSize - haloMinSize) * health / maxHealth);
@@ -254,10 +298,10 @@ public class Character : MonoBehaviour {
 	public void TriggerExit (Collider2D other) {
 		if (other.gameObject.tag == "LevelTile") {
 			//			ViewportHandler.viewport.GetComponent<ViewportHandler>().MoveViewport (gameObject.GetComponent<BoxCollider2D>().);
-			Collider2D[] colls = Physics2D.OverlapPointAll(new Vector2(transform.position.x, transform.position.y));
+			Collider2D[] colls = Physics2D.OverlapPointAll (new Vector2 (transform.position.x, transform.position.y));
 			for (int i = 0; i < colls.Length; ++i) {
 				if (colls [i].gameObject.tag == "LevelTile") {
-					ViewportHandler.viewport.GetComponent<ViewportHandler>().MoveViewport (colls [i].gameObject);
+					ViewportHandler.viewport.GetComponent<ViewportHandler> ().MoveViewport (colls [i].gameObject);
 					i = colls.Length;
 				}
 			}
@@ -301,7 +345,7 @@ public class Character : MonoBehaviour {
 		audioSource.Stop ();
 		audioSource.loop = true;
 		WalkieTalkie wt = walkieTalkie.GetComponent<WalkieTalkie> ();
-		walkieTalkie.GetComponent<Animator> ().Play ("active");
+		//walkieTalkie.GetComponent<Animator> ().Play ("active");
 		if (isDoorCrysis) {
 			wt.PlanQuestion (-1, 0);
 		} else {

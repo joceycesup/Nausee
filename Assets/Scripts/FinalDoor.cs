@@ -8,6 +8,9 @@ public class FinalDoor : Door {
 	public float audioFadeTime = 1.0f;
 	private float audioFadeRemainingTime = 0.0f;
 
+	private float fadeOutTime;
+	private float fadeOutStartTime;
+
 	void Start () {
 		exitMusicStartTime = float.MaxValue;
 		isFinalDoor = true;
@@ -27,23 +30,27 @@ public class FinalDoor : Door {
 				exitMusic.Play ();
 			}
 		}
-		if (audioFadeRemainingTime > 0.0f && exitMusic.isPlaying) {
+		if (exitMusic.isPlaying) {
+			float volume = Mathf.Max(1.0f, 1.0f - (Time.time-fadeOutStartTime)/(fadeOutTime-fadeOutStartTime));
 			if ((audioFadeRemainingTime -= Time.deltaTime) <= 0.0f) {//*
-				exitMusic.volume = 1.0f;
+				exitMusic.volume = volume;
 				openSource.volume = 0.0f;
 				openSource.Stop ();//*/
 			} else {
 				openSource.volume = audioFadeRemainingTime / audioFadeTime;
-				exitMusic.volume = 1.0f - audioFadeRemainingTime / audioFadeTime;
+				exitMusic.volume = volume - audioFadeRemainingTime / audioFadeTime;
 			}
 		}
 	}
 
 	public override bool Open (GameObject k) {
 		bool res = base.Open (k);
-		Debug.Log ("coucou");
-		exitMusicStartTime = Time.time + openSound.length - audioFadeTime;
-		audioFadeRemainingTime = audioFadeTime;
+		if (res) {
+			exitMusicStartTime = Time.time + openSound.length - audioFadeTime;
+			audioFadeRemainingTime = audioFadeTime;
+			fadeOutStartTime = Time.time + exitMusic.clip.length;
+			fadeOutTime = Time.time + exitMusic.clip.length * 2.0f;
+		}
 		return res;
 	}
 }
