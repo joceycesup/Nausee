@@ -15,10 +15,12 @@ public class Character : MonoBehaviour {
 
 	public float crysisRemainingTime = 0.0f;
 	private float lastTalkTime;
-	public float maxStopTalkTime = 0.2f;
+	public float maxStopTalkTime = 0.3f;
 	private bool wasTalking = true;
 	private bool isTalking = true;
 	private int crysis = 0;
+	private bool talkingCure = false;
+	private int talkingCureReminder = 0;
 
 	private bool doorCrysis = false;
 
@@ -50,23 +52,32 @@ public class Character : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		wasTalking = isTalking;
-		isTalking = walkieTalkie.GetComponent<WalkieTalkie> ().IsTalking ();
 		if (crysisRemainingTime > 0.0f) {
-			if (isTalking) {
-				float dTime = Time.deltaTime;
-				if (!wasTalking) {
-					//Debug.Log ("started talking");
-					if ((Time.time - lastTalkTime) < maxStopTalkTime) {
-						dTime = Time.time - lastTalkTime;
+			wasTalking = isTalking;
+			isTalking = walkieTalkie.GetComponent<WalkieTalkie> ().IsTalking ();
+			if (talkingCure) {
+				if (isTalking) {
+					float dTime = Time.deltaTime;
+					if (!wasTalking) {
+						Debug.Log ("started talking");
+						if ((Time.time - lastTalkTime) < maxStopTalkTime) {
+							dTime = Time.time - lastTalkTime;
+						}
+					}
+					if ((crysisRemainingTime -= dTime) <= 0.0f) {
+						StopTalkingCure ();
+					}
+					lastTalkTime = Time.time;
+				} else if ((Time.time - lastTalkTime) > maxStopTalkTime) {
+					Debug.Log ("stopped talking");
+					if (!walkieTalkie.GetComponent<AudioSource> ().isPlaying) {
+						walkieTalkie.GetComponent<WalkieTalkie> ().PlanQuestion (talkingCureReminder);
 					}
 				}
-				if ((crysisRemainingTime -= dTime) <= 0.0f) {
+			} else {
+				if (!audioSource.isPlaying) {
 					StopCrysis ();
 				}
-				lastTalkTime = Time.time;
-			} else if ((Time.time - lastTalkTime) > maxStopTalkTime) {
-				//Debug.Log ("stopped talking");
 			}
 		} else {
 			float speed = ((wellBeing / maxWellBeing) * (maxSpeed - minSpeed)) + minSpeed;
@@ -222,6 +233,7 @@ public class Character : MonoBehaviour {
 		crysisRemainingTime = crysisTalkTimes[crysis];
 		Debug.Log ("Sounds/Crysis" + (crysis+1) + ".wav");
 		audioSource.Stop ();
+		audioSource.loop = false;
 		audioSource.clip = Resources.Load<AudioClip> ("Sounds/Crysis" + (crysis+1));
 		audioSource.Play ();
 
@@ -232,8 +244,21 @@ public class Character : MonoBehaviour {
 
 	private void StopCrysis () {
 		audioSource.Stop ();
+		audioSource.loop = true;
 		WalkieTalkie wt = walkieTalkie.GetComponent<WalkieTalkie> ();
 		walkieTalkie.GetComponent<Animator> ().Play ("active");
-		wt.PlanQuestion ();
+		wt.PlanQuestion (0);
+		TalkingCure ();
+	}
+
+	private void TalkingCure () {
+		talkingCureReminder = 0;
+		isTalking = false;
+		talkingCure = true;
+	}
+
+	private void StopTalkingCure () {
+		talkingCure = false;
+		walkieTalkie.GetComponent<Animator> ().Play ("idle");
 	}
 }
