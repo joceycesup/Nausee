@@ -31,7 +31,7 @@ public class FinalDoor : Door {
 			}
 		}
 		if (exitMusic.isPlaying) {
-			float volume = 1.0f - (Time.time-fadeOutStartTime)/(fadeOutTime-fadeOutStartTime);
+			float volume = Mathf.Max(1.0f, 1.0f - (Time.time-fadeOutStartTime)/(fadeOutTime-fadeOutStartTime));
 			if ((audioFadeRemainingTime -= Time.deltaTime) <= 0.0f) {//*
 				exitMusic.volume = volume;
 				openSource.volume = 0.0f;
@@ -48,7 +48,7 @@ public class FinalDoor : Door {
 		if (res) {
 			exitMusicStartTime = Time.time + openSound.length - audioFadeTime;
 			audioFadeRemainingTime = audioFadeTime;
-			fadeOutStartTime = Time.time;
+			fadeOutStartTime = Time.time + exitMusic.clip.length;
 			fadeOutTime = Time.time + exitMusic.clip.length * 2.0f;
 		}
 		return res;
