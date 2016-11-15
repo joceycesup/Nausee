@@ -69,7 +69,7 @@ public class Character : MonoBehaviour {
 
 		audioSource = gameObject.GetComponent<AudioSource> ();
 
-		startTime = 0;//Time.time + Resources.Load<AudioClip> ("Sounds/VoiceOver/tutoVoice").length;
+		startTime = Time.time + Resources.Load<AudioClip> ("Sounds/VoiceOver/tutoVoice").length;
 	}
 
 	// Update is called once per frame
@@ -79,8 +79,6 @@ public class Character : MonoBehaviour {
 				SceneManager.LoadScene ("Menu");
 			} else {
 				gameObject.GetComponent<AudioSource> ().volume = 1.0f - (Time.time - reachedEndTime) / (exitTime - reachedEndTime);
-				float dx = Input.GetAxis ("Horizontal");
-				float dy = Input.GetAxis ("Vertical");
 				gameObject.GetComponent<Animator> ().Play ("back");
 				Vector3 dv = Vector3.Normalize (endLocation.transform.position - gameObject.transform.position);
 				dv *= Time.deltaTime * maxSpeed / stepDistance;

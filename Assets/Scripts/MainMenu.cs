@@ -4,13 +4,12 @@ using System.Collections;
 
 public class MainMenu : MonoBehaviour {
 
-
 	public void Startgame () {
-		SceneManager.LoadScene("NauseeLvl");
+		gameObject.GetComponent<SpriteRenderer> ().enabled = true;
+		SceneManager.LoadScene(1);
 	}
 
 	public void Quitgame () {
 		Application.Quit();
-
 	}
 }

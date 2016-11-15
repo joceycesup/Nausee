@@ -22,6 +22,7 @@ public class ViewportHandler : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		UnityEngine.Cursor.visible = false;
 		audio1 = gameObject.GetComponent<AudioSource> ();
 		audio2 = (AudioSource)gameObject.AddComponent<AudioSource> ();
 		audio2.loop = true;

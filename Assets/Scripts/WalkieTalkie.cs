@@ -45,13 +45,13 @@ public class WalkieTalkie : MonoBehaviour {
 				gameObject.GetComponent<SpriteRenderer> ().color = new Color (1.0f, 1.0f, 1.0f);
 			}//*/
 			lastUpdateTime = Time.time;
-
+			/*
 			if (Input.GetButton ("CalibrateSound")) { // on commence la calibration du micro en appuyant sur ce bouton
 				loudnessValues.Add (micro.volume);
-			}
+			}//*/
 		} else {
 			currentTime = Time.time - lastUpdateTime;
-		}
+		}/*
 		if (Input.GetButtonUp ("CalibrateSound")) { // on arrete la calibration du micro et on affecte la moyenne puis le seuil
 			averageLoudness = 0.0f;
 			foreach (float lv in loudnessValues) {
@@ -66,7 +66,7 @@ public class WalkieTalkie : MonoBehaviour {
 			// change cette valeur comme tu veux ou utilise une autre technique pour definir le seuil, c'est toi qui vois
 			loudnessThreshold = averageLoudness / 2.0f;
 			//Debug.Log ("Threshold : " + loudnessThreshold);
-		}
+		}//*/
 	}
 
 	public bool IsTalking () {
