@@ -337,7 +337,6 @@ public class Character : MonoBehaviour {
 		LoseHealth (10.0f);
 		crysisTalkTime = crysisTalkTimes[crysis];
 		crysisRemainingTime = crysisTalkTime;
-		Debug.Log ("Sounds/Crysis" + (crysis+1) + ".wav");
 		audioSource.Stop ();
 		audioSource.loop = false;
 		audioSource.clip = Resources.Load<AudioClip> ("Sounds/Crysis" + (crysis+1));

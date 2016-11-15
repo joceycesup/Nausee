@@ -7,7 +7,7 @@ public class WalkieTalkie : MonoBehaviour {
 	private float lastUpdateTime;
 	private float currentTime;
 
-	private List<float> loudnessValues;
+	//private List<float> loudnessValues;
 	// utilise pour stocker les valeurs en cours de calibration du niveau moyen de la voix
 	private float averageLoudness;
 	// niveau moyen de la voix
@@ -24,7 +24,7 @@ public class WalkieTalkie : MonoBehaviour {
     
 	// Use this for initialization
 	void Start () {
-		loudnessValues = new List<float> ();
+		//loudnessValues = new List<float> ();
 		lastUpdateTime = Time.time;
 		currentTime = Time.time;
 		micro = input.GetComponent<micInput> ();
