@@ -19,13 +19,15 @@ public class WalkieTalkie : MonoBehaviour {
 
 	private AudioSource voiceOver;
 	private int maxSkip = 2;
+
+	public GameObject input;
     
 	// Use this for initialization
 	void Start () {
 		loudnessValues = new List<float> ();
 		lastUpdateTime = Time.time;
 		currentTime = Time.time;
-		micro = gameObject.GetComponent<micInput> ();
+		micro = input.GetComponent<micInput> ();
 		voiceOver = gameObject.GetComponent<AudioSource> ();
 		voiceOver.clip = Resources.Load<AudioClip> ("Sounds/VoiceOver/tutoVoice");
 		voiceOver.loop = false;
@@ -68,7 +70,7 @@ public class WalkieTalkie : MonoBehaviour {
 	}
 
 	public bool IsTalking () {
-		return micro.volume > loudnessThreshold || Input.GetButton ("Fire2");
+		return micro.volume > loudnessThreshold;// || Input.GetButton ("Fire2");
 	}
 
 	private string IntToString (int v, int size) {

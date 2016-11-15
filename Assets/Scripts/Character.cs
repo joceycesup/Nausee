@@ -17,7 +17,7 @@ public class Character : MonoBehaviour {
 	private float crysisTalkTime = 0.0f; // used only to refill WB gauge
 	public float crysisRemainingTime = 0.0f;
 	private float lastTalkTime;
-	public float maxStopTalkTime = 0.3f; // used to avoid blanks during talking cure
+	public float maxStopTalkTime = 0.5f; // used to avoid blanks during talking cure
 	public float timeBeforeReminder = 1.0f;
 	private bool wasTalking = true;
 	private bool isTalking = true;
@@ -43,15 +43,18 @@ public class Character : MonoBehaviour {
 	private AudioSource audioSource;
 
 	public float[] crysisTalkTimes;
+	public Color micTint;
 
-	public bool tutoSkipped = false;
 	private float startTime;
 
 	private bool reachedEnd = false;
+	private float reachedEndTime;
 	private float exitTime;
 	private bool dead = false;
 
 	private bool canTalk = false;
+	private bool canWalk = false;
+	private bool tutoSkipped = false;
 
 	public GameObject endLocation;
 
@@ -66,7 +69,7 @@ public class Character : MonoBehaviour {
 
 		audioSource = gameObject.GetComponent<AudioSource> ();
 
-		startTime = Time.time + Resources.Load<AudioClip> ("Sounds/VoiceOver/tutoVoice").length;
+		startTime = 0;//Time.time + Resources.Load<AudioClip> ("Sounds/VoiceOver/tutoVoice").length;
 	}
 
 	// Update is called once per frame
@@ -75,6 +78,7 @@ public class Character : MonoBehaviour {
 			if (Time.time > exitTime) {
 				SceneManager.LoadScene ("Menu");
 			} else {
+				gameObject.GetComponent<AudioSource> ().volume = 1.0f - (Time.time - reachedEndTime) / (exitTime - reachedEndTime);
 				float dx = Input.GetAxis ("Horizontal");
 				float dy = Input.GetAxis ("Vertical");
 				gameObject.GetComponent<Animator> ().Play ("back");
@@ -88,12 +92,15 @@ public class Character : MonoBehaviour {
 			if (Time.time > exitTime) {
 				SceneManager.LoadScene ("Menu");
 			}
+			return;
 		}
 
 		if (!tutoSkipped) {
 			if (Time.time >= startTime) {
 				tutoSkipped = true;
+				canWalk = true;
 			}
+			return;
 		}
 		if (crysisRemainingTime > 0.0f) {
 			wasTalking = isTalking;
@@ -107,6 +114,7 @@ public class Character : MonoBehaviour {
 					if (isTalking) {
 						float dTime = Time.deltaTime;
 						if (!wasTalking) {
+							walkieTalkie.GetComponent<SpriteRenderer> ().color = micTint;
 							//Debug.Log ("started talking");
 							if ((Time.time - lastTalkTime) < maxStopTalkTime) {
 								dTime = Time.time - lastTalkTime;
@@ -125,6 +133,7 @@ public class Character : MonoBehaviour {
 							Debug.Log ("start talkingcure");
 							talkingCureReminder++;
 						} else {
+							walkieTalkie.GetComponent<SpriteRenderer> ().color = Color.white;
 							//Debug.Log ("stopped talking");
 							//canTalk = !walkieTalkie.GetComponent<AudioSource> ().isPlaying;
 							if ((Time.time - lastTalkTime) > timeBeforeReminder) {
@@ -148,7 +157,7 @@ public class Character : MonoBehaviour {
 					StopCrysis ();
 				}
 			}
-		} else if (tutoSkipped) {
+		} else if (canWalk) {
 			float speed = ((wellBeing / maxWellBeing) * (maxSpeed - minSpeed)) + minSpeed;
 
 			float dx = Input.GetAxis ("Horizontal");
@@ -223,6 +232,7 @@ public class Character : MonoBehaviour {
 				if (other.gameObject.GetComponent<Door>().isFinalDoor) {
 					ViewportHandler.viewport.GetComponent<ViewportHandler> ().FadeToSound (0, 2.0f);
 					reachedEnd = true;
+					reachedEndTime = Time.time;
 					exitTime = Time.time + Resources.Load<AudioClip> ("Sounds/Exit_Music").length * 2.0f;
 				}
 				Destroy (key);
@@ -345,7 +355,6 @@ public class Character : MonoBehaviour {
 		audioSource.Stop ();
 		audioSource.loop = true;
 		WalkieTalkie wt = walkieTalkie.GetComponent<WalkieTalkie> ();
-		//walkieTalkie.GetComponent<Animator> ().Play ("active");
 		if (isDoorCrysis) {
 			wt.PlanQuestion (-1, 0);
 		} else {
@@ -364,6 +373,8 @@ public class Character : MonoBehaviour {
 			currentQuestion++;
 		talkingCure = false;
 		isDoorCrysis = false;
+		canTalk = false;
 		walkieTalkie.GetComponent<Animator> ().Play ("idle");
+		walkieTalkie.GetComponent<SpriteRenderer> ().color = Color.white;
 	}
 }

@@ -31,7 +31,7 @@ public class FinalDoor : Door {
 			}
 		}
 		if (exitMusic.isPlaying) {
-			float volume = Mathf.Max(1.0f, 1.0f - (Time.time-fadeOutStartTime)/(fadeOutTime-fadeOutStartTime));
+			float volume = 1.0f - Mathf.Max(1.0f, Time.time-fadeOutStartTime)/(fadeOutTime-fadeOutStartTime);
 			if ((audioFadeRemainingTime -= Time.deltaTime) <= 0.0f) {//*
 				exitMusic.volume = volume;
 				openSource.volume = 0.0f;
